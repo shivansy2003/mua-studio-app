@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4A152C" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Glow &amp; Grace — Makeup Artist &amp; Beauty Studio App</title>
+  <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;Glow &amp; Grace Studio&quot;,&quot;short_name&quot;:&quot;GlowStudio&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#FDF7F5&quot;,&quot;theme_color&quot;:&quot;#4A152C&quot;}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F5EAE8;
+      color: #2D111D;
+      -webkit-tap-highlight-color: transparent;
+    }
+    h1, h2, h3, .font-serif-brand {
+      font-family: 'Playfair Display', Georgia, serif;
+      letter-spacing: -0.01em;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes popIn {
+      0% { transform: scale(0.88); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: popIn 0.2s ease-out forwards; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center bg-[#F4EAE6]">
+
+  <!-- Mobile-first Studio App Container -->
+  <div id="app-shell" class="w-full max-w-md min-h-screen bg-[#FDF7F5] shadow-2xl flex flex-col relative overflow-x-hidden pb-24">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-30 bg-[#4A152C] text-white px-4 py-3 shadow-md">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D9829B] to-[#C86D85] flex items-center justify-center text-lg shrink-0 shadow">
+            💄
+          </div>
+          <div class="min-w-0">
+            <h1 id="header-studio-name" class="font-bold text-base leading-tight truncate">Glow &amp; Grace Studio</h1>
+            <p class="text-[11px] text-[#F2D5DF] truncate">Bridal MUA • Beauty Parlour • Loyalty</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="trial-badge-btn" type="button" class="px-2 py-1 rounded-full text-[10px] font-semibold bg-[#D9829B]/25 border border-[#D9829B]/60 text-[#FFE8F0] hover:bg-[#D9829B]/40 transition">
+            Pilot: 28d
+          </button>
+          <button id="header-profile-btn" type="button" title="Artist Profile" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#FFD6E4] to-[#D9829B] text-[#4A152C] font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-md hover:scale-105 transition">
+            <span id="header-profile-initials">GG</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Active Client Bar -->
+    <div id="client-context-bar" class="bg-white border-b border-[#F0DFE5] px-4 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span id="active-client-initials" class="w-7 h-7 rounded-full bg-[#FCEBF1] text-[#8E3255] font-bold text-xs flex items-center justify-center shrink-0">NS</span>
+        <div class="min-w-0">
+          <div id="active-client-name" class="text-xs font-semibold text-[#2A121C] truncate">Neha Sharma</div>
+          <div id="active-client-meta" class="text-[11px] text-[#7D5C69]">0 Visits • New Client (1st Visit Popup Ready)</div>
+        </div>
+      </div>
+      <button id="switch-client-btn" type="button" class="text-xs font-semibold text-[#C86D85] bg-[#FFF2F6] border border-[#F3CFD9] px-2.5 py-1 rounded-lg hover:bg-[#FCE3EC] transition shrink-0">
+        Switch / Add
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 px-4 pt-4 space-y-4"></main>
+
+    <!-- Trial Expired Lock Overlay -->
+    <div id="trial-lock-overlay" class="hidden fixed inset-0 z-40 bg-[#220914]/85 backdrop-blur-sm flex items-center justify-center p-5">
+      <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border border-[#F0DFE5] animate-pop">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-3">🔒</div>
+        <h2 class="text-lg font-bold text-[#2A121C]">30-Day Free Pilot Ended</h2>
+        <p class="text-xs text-[#7D5C69] mt-2 leading-relaxed">
+          Your 1-month free trial for <strong id="lock-studio-name">Glow &amp; Grace Studio</strong> has expired. Activate your monthly plan to unlock bookings, loyalty cards, and win-back alerts.
+        </p>
+        <button id="unlock-demo-btn" type="button" class="mt-4 w-full py-2.5 rounded-xl bg-[#4A152C] text-white text-xs font-semibold hover:bg-[#521A33] transition">
+          Go to Owner Dashboard to Unlock
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Booking Bar -->
+    <div id="floating-book-bar" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[26rem] z-30 bg-[#4A152C] text-white rounded-2xl p-3 shadow-xl flex items-center justify-between gap-3 animate-pop">
+      <div>
+        <div class="text-xs text-[#F2D5DF]" id="book-summary-count">1 service • 11:00 AM</div>
+        <div class="text-base font-bold" id="book-summary-total">₹1,200</div>
+      </div>
+      <button id="confirm-booking-btn" type="button" class="px-4 py-2 rounded-xl bg-[#D9829B] hover:bg-[#C66B86] text-[#2A121C] text-xs font-extrabold transition shadow">
+        Book &amp; Add Stamp
+      </button>
+    </div>
+
+    <!-- Bottom Navigation (5 Screens) -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-30 bg-white border-t border-[#F0DFE5] px-1 py-1.5 flex justify-around items-center shadow-[0_-4px_16px_rgba(59,18,36,0.06)]">
+      <button type="button" data-tab="book" class="nav-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#C86D85] font-semibold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[10px]">Services</span>
+      </button>
+      <button type="button" data-tab="stamps" class="nav-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#8C6D79] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        <span class="text-[10px]">Glow Card</span>
+      </button>
+      <button type="button" data-tab="rewards" class="nav-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#8C6D79] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[10px]">Looks &amp; Gifts</span>
+      </button>
+      <button type="button" data-tab="winback" class="nav-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#8C6D79] font-medium relative">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        <span class="text-[10px]">Win-Back</span>
+        <span id="dormant-badge" class="absolute top-0.5 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+      </button>
+      <button type="button" data-tab="owner" class="nav-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#8C6D79] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-[10px]">Studio</span>
+      </button>
+    </nav>
+
+    <!-- First-Visit (and Anytime) Google Review + Instagram Popup Modal -->
+    <div id="review-social-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+      <div class="bg-white w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4 animate-pop border border-[#F0DFE5]">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span id="modal-trigger-badge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-100 text-[#8E3255]">Welcome — 1st Visit! ✨</span>
+            <h3 class="text-base font-extrabold text-[#2A121C] mt-1">Loved Your Experience?</h3>
+            <p id="modal-subtitle" class="text-xs text-[#7D5C69]">Rate us on Google &amp; follow on Instagram to unlock your VIP beauty perks!</p>
+          </div>
+          <button id="close-review-modal" type="button" class="text-xs font-semibold text-[#7D5C69] px-2 py-1 rounded-lg hover:bg-[#FDF7F5]">Close</button>
+        </div>
+
+        <div class="bg-[#FDF7F5] rounded-xl p-3.5 border border-[#F0DFE5] text-center space-y-2.5">
+          <div class="text-xs font-bold text-[#2A121C]">Tap Stars &amp; Leave a Google Review</div>
+          <div id="star-rating-row" class="flex justify-center gap-2 text-2xl">
+            <button type="button" onclick="selectStar(1)" class="star-btn text-[#DFC8D1] hover:scale-110 transition">★</button>
+            <button type="button" onclick="selectStar(2)" class="star-btn text-[#DFC8D1] hover:scale-110 transition">★</button>
+            <button type="button" onclick="selectStar(3)" class="star-btn text-[#DFC8D1] hover:scale-110 transition">★</button>
+            <button type="button" onclick="selectStar(4)" class="star-btn text-[#DFC8D1] hover:scale-110 transition">★</button>
+            <button type="button" onclick="selectStar(5)" class="star-btn text-[#DFC8D1] hover:scale-110 transition">★</button>
+          </div>
+          <a id="modal-google-review-link" href="#" target="_blank" rel="noopener" onclick="markSocialConnect('googleReview')" class="block w-full py-2.5 rounded-xl bg-[#1A73E8] hover:bg-[#1558B0] text-white text-xs font-bold transition shadow">
+            ⭐ Rate on Google Business Profile
+          </a>
+        </div>
+
+        <div class="space-y-2">
+          <div class="text-xs font-bold text-[#2A121C]">Follow &amp; Tag Us on Social Media</div>
+          <div id="modal-social-buttons" class="grid grid-cols-2 gap-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Switch / Add Modal -->
+    <div id="client-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-3">
+      <div class="bg-white w-full max-w-md rounded-2xl p-4 shadow-2xl space-y-3 animate-pop max-h-[85vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-[#F0DFE5] pb-2">
+          <h3 class="font-bold text-sm text-[#2A121C]">Select or Add Client</h3>
+          <button id="close-client-modal" type="button" class="text-xs font-semibold text-[#7D5C69] px-2 py-1 rounded-lg hover:bg-[#FDF7F5]">Close</button>
+        </div>
+        <div id="modal-client-list" class="space-y-2 overflow-y-auto max-h-56 pr-1"></div>
+        <form id="add-client-form" class="border-t border-[#F0DFE5] pt-3 space-y-2">
+          <p class="text-xs font-semibold text-[#2A121C]">New Walk-in / Bridal Client</p>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="new-client-name" type="text" placeholder="Client Name" required class="px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+            <input id="new-client-phone" type="tel" placeholder="10-digit WhatsApp" required class="px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+          </div>
+          <input id="new-client-note" type="text" placeholder="Skin/Preference note (e.g. Sensitive skin, Rica wax)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+          <button type="submit" class="w-full py-2 rounded-xl bg-[#4A152C] text-white text-xs font-semibold hover:bg-[#521A33] transition">
+            + Add Client &amp; Select
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Professional Welcome Popup (Opens on Every App Launch) -->
+    <div id="welcome-popup-modal" class="hidden fixed inset-0 z-50 bg-[#1B0610]/75 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl border border-[#F0DFE5] animate-pop">
+        <div class="bg-gradient-to-br from-[#4A152C] via-[#591C37] to-[#8E3255] px-6 pt-7 pb-6 text-center text-white relative">
+          <div class="w-16 h-16 mx-auto rounded-full bg-white/15 border-2 border-[#FFD6E4] flex items-center justify-center text-3xl shadow-lg mb-3">
+            ✨
+          </div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#FFD6E4]">Welcome To</p>
+          <h2 id="welcome-studio-title" class="text-2xl font-extrabold tracking-tight mt-1 leading-tight">Glow &amp; Grace Studio</h2>
+          <p id="welcome-studio-tagline" class="text-xs text-[#F2D5DF] mt-1.5 leading-snug">Certified Bridal &amp; HD Makeup Artist • 6+ Yrs Exp</p>
+        </div>
+        <div class="p-5 text-center space-y-3 bg-[#FDF7F5]">
+          <div id="welcome-studio-location" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#F0DFE5] text-[11px] font-semibold text-[#7D5C69]">
+            📍 Rajapeth, Amravati, Maharashtra
+          </div>
+          <p class="text-xs text-[#5E424D] leading-relaxed">
+            Book your appointment, collect Glow Stamps, and unlock your <strong>6th Visit Free Service</strong>.
+          </p>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button id="welcome-profile-btn" type="button" class="py-2.5 rounded-xl bg-white border border-[#E5CCD5] text-[#4A152C] text-xs font-bold hover:bg-[#FCEBF1] transition">
+              View Profile
+            </button>
+            <button id="welcome-start-btn" type="button" class="py-2.5 rounded-xl bg-[#4A152C] text-white text-xs font-bold hover:bg-[#521A33] transition shadow">
+              Explore &amp; Book →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-box" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#4A152C] text-white text-xs font-medium px-4 py-2.5 rounded-xl shadow-lg border border-[#D9829B]/50 max-w-[90%] text-center animate-pop"></div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mua_studio_demo_v1';
+
+    const DEFAULT_STATE = {
+      studioName: 'Glow & Grace Studio',
+      artistTagline: 'Certified Bridal & HD Makeup Artist • 6+ Yrs Exp',
+      artistLocation: 'Rajapeth, Amravati, Maharashtra',
+      artistPhone: '9876543210',
+      artistHours: '10:00 AM – 8:00 PM (Tue–Sun)',
+      instagramHandle: '@glowandgrace.mua',
+      certificates: ['CIDESCO Certified MUA', 'Lakme Academy Pro Bridal', 'Airbrush & HD Specialist'],
+      profileEditMode: false,
+      googleReviewUrl: 'https://g.page/r/glow-grace-studio/review',
+      socialLinks: {
+        instagram: 'https://instagram.com/glowandgrace.mua',
+        facebook: 'https://facebook.com/glowandgrace.mua',
+        youtube: 'https://youtube.com/@glowandgrace',
+        whatsapp: 'https://whatsapp.com/channel/glow-grace'
+      },
+      selectedStars: 5,
+      trialDaysLeft: 28,
+      trialLocked: false,
+      activeTab: 'book',
+      selectedCategory: 'All',
+      selectedSlot: '11:00 AM',
+      selectedDate: 'Today',
+      advancePaidInput: 0,
+      activeClientId: 'cl1',
+      winbackOffer: '15% Off on Monthly Facial / Touch-up',
+      cart: {},
+      servicesEditMode: false,
+      services: [
+        { id: 's1', name: 'Eyebrow + Upper Lip Threading', category: 'Threading & Wax', price: 80, duration: '15 min', emoji: '✨', popular: true },
+        { id: 's2', name: 'Full Arms + Legs Rica Wax', category: 'Threading & Wax', price: 950, duration: '45 min', emoji: '🌸', popular: true },
+        { id: 's3', name: 'Gold / Diamond Glow Facial', category: 'Facial & Skin', price: 1200, duration: '60 min', emoji: '💆‍♀️', popular: true },
+        { id: 's4', name: 'Fruit Cleanup & De-Tan', category: 'Facial & Skin', price: 650, duration: '40 min', emoji: '🍓', popular: false },
+        { id: 's5', name: 'Keratin Hair Spa', category: 'Hair Care', price: 1100, duration: '50 min', emoji: '💇‍♀️', popular: true },
+        { id: 's6', name: 'Hair Cut & Blow Dry', category: 'Hair Care', price: 550, duration: '40 min', emoji: '✂️', popular: false },
+        { id: 's7', name: 'Hair Root Touch-up / Color', category: 'Hair Care', price: 1600, duration: '75 min', emoji: '🎨', popular: false },
+        { id: 's8', name: 'Manicure & Pedicure Spa', category: 'Mani-Pedi', price: 900, duration: '60 min', emoji: '💅', popular: true }
+      ],
+      bridalPackages: [
+        { id: 'bp1', name: 'Royal Bridal Airbrush / HD', type: 'Wedding Package', price: 15000, emoji: '👰', desc: 'HD/Airbrush makeup, hair styling, drape & lashes' },
+        { id: 'bp2', name: 'Haldi & Mehndi Dewy Look', type: 'Wedding Package', price: 4500, emoji: '🌼', desc: 'Fresh floral hair + waterproof natural glam' },
+        { id: 'bp3', name: 'Sangeet / Reception Glam', type: 'Wedding Package', price: 6500, emoji: '✨', desc: 'Smokey/shimmer eyes, hairstyle & saree/lehenga pinning' },
+        { id: 'bp4', name: 'Outdoor Siders / Party Order', type: 'Outdoor Order', price: 2500, emoji: '🚗', desc: 'Venue visit makeup + hair (per person, min 2)' },
+        { id: 'bp5', name: 'Pre-Bridal 5-Session Glow', type: 'Wedding Package', price: 7500, emoji: '💎', desc: 'Facials, body polish, Rica wax, mani-pedi & hair spa' }
+      ],
+      lookbook: [
+        { id: 'l1', title: 'Royal Marwari Bridal HD', tag: 'Bridal', serviceId: 's2', desc: 'Soft smokey eyes, waterproof base & traditional drape', gradient: 'from-[#521A33] to-[#9E3B63]', emoji: '👑' },
+        { id: 'l2', title: 'Sun-Kissed Haldi Glam', tag: 'Haldi / Mehndi', serviceId: 's3', desc: 'Dewy glass skin finish with floral hair styling', gradient: 'from-[#C87D28] to-[#E5A93C]', emoji: '🌼' },
+        { id: 'l3', title: 'Cocktail Shimmer Look', tag: 'Party', serviceId: 's1', desc: 'Bronze glam eyes, bold lip & soft waves', gradient: 'from-[#2D1B36] to-[#6B3B7B]', emoji: '✨' }
+      ],
+      clients: [
+        { id: 'cl1', name: 'Neha Sharma', phone: '9876543210', stamps: 0, totalVisits: 0, referrals: 0, lastVisitDaysAgo: 0, note: 'Combination skin • Prefers warm nude shades', pingedToday: false, social: { googleReview: false, instagram: false, facebook: false, youtube: false, whatsapp: false } },
+        { id: 'cl2', name: 'Rutuja Deshmukh', phone: '9822011223', stamps: 5, totalVisits: 5, referrals: 1, lastVisitDaysAgo: 4, note: 'Sensitive skin • Rica Wax only', pingedToday: false, social: { googleReview: true, instagram: true, facebook: false, youtube: false, whatsapp: true } },
+        { id: 'cl3', name: 'Pooja Kulkarni', phone: '9765400112', stamps: 2, totalVisits: 2, referrals: 2, lastVisitDaysAgo: 32, note: 'Bridal client (Dec wedding) • Warm Ivory tone', pingedToday: false, social: { googleReview: true, instagram: true, facebook: true, youtube: false, whatsapp: false } },
+        { id: 'cl4', name: 'Anjali Verma', phone: '9923145678', stamps: 1, totalVisits: 1, referrals: 0, lastVisitDaysAgo: 28, note: 'Dry hair • Loves Keratin Spa', pingedToday: false, social: { googleReview: false, instagram: true, facebook: false, youtube: false, whatsapp: false } }
+      ],
+      rewards: [
+        { id: 'rw1', title: 'Free Eyebrow + Sheet Mask', desc: 'Complimentary on your 3rd salon visit', cost: 3, emoji: '🎭' },
+        { id: 'rw2', title: 'Free Hair Spa / Glow Cleanup', desc: '6th Visit Milestone Reward (up to ₹1,100)', cost: 6, emoji: '💆‍♀️' },
+        { id: 'rw3', title: '25% Off Party Makeup', desc: 'Applicable on any HD Party or Reception look', cost: 10, emoji: '💄' }
+      ],
+      vouchers: [
+        { code: 'GLOW-3180', rewardTitle: 'Free Eyebrow + Sheet Mask', clientName: 'Rutuja Deshmukh', status: 'Active' }
+      ],
+      bookings: [
+        { id: 'BK-204', clientName: 'Pooja Kulkarni', venue: 'Hotel Mehfil Inn (Outdoor)', slot: '12 Dec, 2:00 PM', itemsText: 'Royal Bridal Airbrush / HD', total: 15000, advance: 5000, status: 'Confirmed', isOutdoor: true },
+        { id: 'BK-203', clientName: 'Rutuja Deshmukh', venue: 'In-Studio', slot: 'Today, 11:00 AM', itemsText: '1x Gold / Diamond Glow Facial', total: 1200, advance: 1200, status: 'Completed', isOutdoor: false }
+      ]
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const merged = { ...DEFAULT_STATE, ...parsed };
+          merged.socialLinks = { ...DEFAULT_STATE.socialLinks, ...(parsed.socialLinks || {}) };
+          merged.clients = (merged.clients || []).map(c => ({
+            ...c,
+            social: { googleReview: false, instagram: false, facebook: false, youtube: false, whatsapp: false, ...(c.social || {}) }
+          }));
+          return merged;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.add('hidden'), 2700);
+    }
+
+    function getActiveClient() {
+      return state.clients.find(c => c.id === state.activeClientId) || state.clients[0];
+    }
+
+    function getInitials(name) {
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function updateHeaderAndChrome() {
+      document.getElementById('header-studio-name').textContent = state.studioName;
+      document.getElementById('lock-studio-name').textContent = state.studioName;
+
+      const badge = document.getElementById('trial-badge-btn');
+      if (state.trialLocked || state.trialDaysLeft <= 0) {
+        badge.textContent = 'Expired';
+        badge.className = 'px-2 py-1 rounded-full text-[10px] font-semibold bg-red-500/25 border border-red-400 text-red-100 transition';
+      } else {
+        badge.textContent = `Pilot: ${state.trialDaysLeft}d`;
+        badge.className = 'px-2 py-1 rounded-full text-[10px] font-semibold bg-[#D9829B]/25 border border-[#D9829B]/60 text-[#FFE8F0] hover:bg-[#D9829B]/40 transition';
+      }
+      document.getElementById('header-profile-initials').textContent = getInitials(state.studioName);
+
+      const cl = getActiveClient();
+      document.getElementById('active-client-initials').textContent = getInitials(cl.name);
+      document.getElementById('active-client-name').textContent = cl.name;
+      document.getElementById('active-client-meta').textContent = cl.totalVisits === 0
+        ? 'New Client • 1st Visit Popup Ready'
+        : `${cl.stamps} Stamps • ${cl.totalVisits} Visits`;
+
+      const bar = document.getElementById('client-context-bar');
+      bar.classList.toggle('hidden', state.activeTab === 'winback' || state.activeTab === 'owner' || state.activeTab === 'profile');
+
+      const dormantCount = state.clients.filter(c => c.lastVisitDaysAgo >= 25 && !c.pingedToday).length;
+      document.getElementById('dormant-badge').style.display = dormantCount > 0 ? 'block' : 'none';
+
+      const isLocked = (state.trialLocked || state.trialDaysLeft <= 0) && state.activeTab !== 'owner';
+      document.getElementById('trial-lock-overlay').classList.toggle('hidden', !isLocked);
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isActive = btn.dataset.tab === state.activeTab;
+        btn.classList.toggle('text-[#C86D85]', isActive);
+        btn.classList.toggle('font-semibold', isActive);
+        btn.classList.toggle('text-[#8C6D79]', !isActive);
+        btn.classList.toggle('font-medium', !isActive);
+      });
+
+      updateBookingBar();
+    }
+
+    function updateBookingBar() {
+      const bar = document.getElementById('floating-book-bar');
+      const entries = Object.entries(state.cart).filter(([, qty]) => qty > 0);
+      if (state.activeTab !== 'book' || entries.length === 0) {
+        bar.classList.add('hidden');
+        return;
+      }
+      let qtyCount = 0;
+      let totalAmt = 0;
+      entries.forEach(([id, qty]) => {
+        const item = state.services.find(s => s.id === id);
+        if (item) {
+          qtyCount += qty;
+          totalAmt += item.price * qty;
+        }
+      });
+      document.getElementById('book-summary-count').textContent = `${qtyCount} service${qtyCount > 1 ? 's' : ''} • ${state.selectedDate}, ${state.selectedSlot}`;
+      document.getElementById('book-summary-total').textContent = `₹${totalAmt}`;
+      bar.classList.remove('hidden');
+    }
+
+    function renderBookScreen() {
+      const slots = ['11:00 AM', '2:00 PM', '4:30 PM', '7:00 PM'];
+      const dates = ['Today', 'Tomorrow', 'Weekend'];
+      const categories = ['All', 'Facial & Skin', 'Threading & Wax', 'Hair Care', 'Mani-Pedi'];
+      const filtered = state.selectedCategory === 'All'
+        ? state.services
+        : state.services.filter(s => s.category === state.selectedCategory);
+
+      return `
+        <section class="space-y-3">
+          <div class="bg-gradient-to-r from-[#4A152C] to-[#6B2342] rounded-2xl p-4 text-white shadow">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <span class="text-[10px] uppercase tracking-wider bg-[#D9829B] text-[#2A121C] px-2 py-0.5 rounded-full font-extrabold">Beauty Parlour Services</span>
+                <h2 class="text-base font-bold mt-1.5">Salon Services &amp; Slot Booking</h2>
+                <p class="text-[11px] text-[#F2D5DF]">1st visit triggers Google &amp; IG VIP perk; every visit adds +1 stamp.</p>
+              </div>
+              <button type="button" onclick="toggleServicesEdit()" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-white/15 border border-white/30 text-white text-[11px] font-bold hover:bg-white/25 transition">
+                ${state.servicesEditMode ? 'Done ✓' : '✏️ Edit'}
+              </button>
+            </div>
+            <div class="mt-3 flex gap-1.5 overflow-x-auto no-scrollbar">
+              ${dates.map(d => `
+                <button type="button" onclick="selectDate('${d}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold shrink-0 transition ${state.selectedDate === d ? 'bg-[#D9829B] text-[#2A121C]' : 'bg-white/15 text-[#F2D5DF]'}">${d}</button>
+              `).join('')}
+              ${slots.map(sl => `
+                <button type="button" onclick="selectSlot('${sl}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold shrink-0 transition ${state.selectedSlot === sl ? 'bg-white text-[#4A152C]' : 'bg-white/15 text-[#F2D5DF]'}">${sl}</button>
+              `).join('')}
+            </div>
+          </div>
+
+          ${state.servicesEditMode ? `
+            <div class="bg-white rounded-2xl p-4 border-2 border-[#C86D85] space-y-3 shadow-sm">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Add / Edit Parlour Services</h3>
+                <span class="text-[10px] font-bold text-[#C86D85]">Auto-saves</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <input id="svc-tab-name" type="text" placeholder="Service Name" class="col-span-2 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5]" />
+                <input id="svc-tab-price" type="number" placeholder="₹ Price" class="px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5]" />
+              </div>
+              <div class="flex gap-2">
+                <select id="svc-tab-cat" class="flex-1 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5] bg-[#FDF7F5]">
+                  <option value="Facial & Skin">Facial &amp; Skin</option>
+                  <option value="Threading & Wax">Threading &amp; Wax</option>
+                  <option value="Hair Care">Hair Care</option>
+                  <option value="Mani-Pedi">Mani-Pedi</option>
+                </select>
+                <input id="svc-tab-dur" type="text" placeholder="45 min" class="w-20 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5]" />
+                <button type="button" onclick="addServiceFromTab()" class="px-3 py-2 rounded-xl bg-[#4A152C] text-white text-xs font-bold">+ Add</button>
+              </div>
+            </div>
+          ` : `
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              ${categories.map(cat => `
+                <button type="button" onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 border transition ${state.selectedCategory === cat ? 'bg-[#4A152C] text-white border-[#4A152C]' : 'bg-white text-[#7D5C69] border-[#F0DFE5]'}">${cat}</button>
+              `).join('')}
+            </div>
+          `}
+
+          <div class="space-y-2.5 pb-14">
+            ${filtered.map(item => {
+              const qty = state.cart[item.id] || 0;
+              if (state.servicesEditMode) {
+                return `
+                  <div class="bg-white rounded-2xl p-3 border border-[#F0DFE5] space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between gap-2">
+                      <input type="text" value="${item.name}" oninput="editServiceField('${item.id}', 'name', this.value)" class="flex-1 px-2.5 py-1.5 text-xs font-bold rounded-xl border border-[#E5CCD5]" />
+                      <button type="button" onclick="deleteService('${item.id}')" class="text-xs font-bold text-red-600 px-2 py-1 rounded-lg hover:bg-red-50">Delete</button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                      <input type="number" value="${item.price}" oninput="editServiceField('${item.id}', 'price', this.value)" class="px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" placeholder="₹ Price" />
+                      <input type="text" value="${item.duration}" oninput="editServiceField('${item.id}', 'duration', this.value)" class="px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" placeholder="Duration" />
+                      <select onchange="editServiceField('${item.id}', 'category', this.value)" class="px-2 py-1.5 text-[11px] rounded-xl border border-[#E5CCD5] bg-[#FDF7F5]">
+                        ${['Facial & Skin', 'Threading & Wax', 'Hair Care', 'Mani-Pedi'].map(c => `<option value="${c}" ${item.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>
+                `;
+              }
+              return `
+                <div class="bg-white rounded-2xl p-3 border border-[#F0DFE5] flex items-center justify-between gap-3 shadow-sm">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-12 h-12 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] flex items-center justify-center text-2xl shrink-0">${item.emoji}</div>
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <h3 class="text-sm font-bold text-[#2A121C] truncate">${item.name}</h3>
+                        ${item.popular ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-pink-50 text-[#C86D85] shrink-0">HOT</span>' : ''}
+                      </div>
+                      <p class="text-[11px] text-[#8C6D79]">${item.category} • ${item.duration}</p>
+                      <p class="text-sm font-bold text-[#C86D85] mt-0.5">₹${item.price}</p>
+                    </div>
+                  </div>
+                  <div class="shrink-0">
+                    ${qty === 0 ? `
+                      <button type="button" onclick="updateCart('${item.id}', 1)" class="px-3.5 py-1.5 rounded-xl bg-[#FDF7F5] border border-[#C86D85] text-[#C86D85] text-xs font-bold hover:bg-[#C86D85] hover:text-white transition">
+                        + Select
+                      </button>
+                    ` : `
+                      <div class="flex items-center gap-2 bg-[#4A152C] text-white rounded-xl px-2 py-1">
+                        <button type="button" onclick="updateCart('${item.id}', -1)" class="w-5 h-5 flex items-center justify-center font-bold text-sm">−</button>
+                        <span class="text-xs font-bold min-w-[14px] text-center">${qty}</span>
+                        <button type="button" onclick="updateCart('${item.id}', 1)" class="w-5 h-5 flex items-center justify-center font-bold text-sm">+</button>
+                      </div>
+                    `}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderStampsScreen() {
+      const cl = getActiveClient();
+      const target = 6;
+      const filled = Math.min(cl.stamps, target);
+      const pct = Math.min(100, Math.round((filled / target) * 100));
+
+      const slots = Array.from({ length: target }, (_, idx) => {
+        const isDone = idx < filled;
+        if (idx === 5) {
+          return `
+            <div class="aspect-square rounded-2xl flex flex-col items-center justify-center border-2 p-1 text-center transition ${isDone ? 'bg-[#2E7D32] border-[#2E7D32] text-white shadow-md' : 'bg-[#FFF2F6] border-dashed border-[#C86D85] text-[#C86D85]'}">
+              <span class="text-2xl">${isDone ? '🎉' : '🎁'}</span>
+              <span class="text-[9px] font-extrabold leading-tight mt-1 uppercase">${isDone ? 'Free Spa Unlocked!' : '6th: Free Spa / Cleanup'}</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition ${isDone ? 'bg-[#C86D85] border-[#C86D85] text-white shadow-md' : 'bg-[#FDF7F5] border-dashed border-[#E2C9D2] text-[#B89AA6]'}">
+            <span class="text-2xl">${isDone ? '💄' : '○'}</span>
+            <span class="text-[10px] font-bold mt-1">${isDone ? 'Visited' : `Visit #${idx + 1}`}</span>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <section class="space-y-4">
+          <div class="bg-gradient-to-br from-[#4A152C] to-[#6B2342] rounded-2xl p-5 text-white shadow-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-[#F2D5DF]">Glow Loyalty Card</p>
+                <h2 class="text-lg font-bold mt-0.5">${cl.name}</h2>
+              </div>
+              <div class="text-right">
+                <div class="text-2xl font-extrabold text-[#FFD6E4]">${cl.stamps}</div>
+                <div class="text-[10px] text-[#F2D5DF]">Total Stamps</div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex justify-between text-[11px] mb-1.5 text-[#F2D5DF]">
+                <span>6th Visit Free Service (${filled}/${target})</span>
+                <span>${pct}%</span>
+              </div>
+              <div class="w-full h-2.5 bg-white/15 rounded-full overflow-hidden">
+                <div class="h-full bg-[#D9829B] rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-[#2A121C]">6-Visit Parlour &amp; Studio Card</h3>
+              <span class="text-[11px] font-semibold text-[#2E7D32] bg-green-50 px-2 py-0.5 rounded-full">
+                ${cl.stamps >= 6 ? 'Free Service Ready!' : `${6 - filled} more to go`}
+              </span>
+            </div>
+            <div class="grid grid-cols-3 gap-3">${slots}</div>
+            <div class="mt-4 pt-3 border-t border-[#F5E8ED] flex gap-2">
+              <button type="button" onclick="logStaffVisit()" class="flex-1 py-2.5 rounded-xl bg-[#4A152C] text-white text-xs font-bold hover:bg-[#521A33] transition">
+                + Staff: Log Visit (+1)
+              </button>
+              <button type="button" onclick="openFirstVisitPopup(false)" class="px-3.5 py-2.5 rounded-xl bg-[#FFF2F6] border border-[#C86D85] text-[#C86D85] text-xs font-bold hover:bg-[#FCE3EC] transition">
+                ⭐ Rate &amp; IG
+              </button>
+            </div>
+          </div>
+
+          <!-- Bridal Referral Tracker + Skin Preference Note -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-[#2A121C]">Bridal Referral Bonus (${cl.referrals}/2 Friends)</div>
+                <div class="text-[11px] text-[#7D5C69]">Refer 2 brides/friends to get Free Party Makeup!</div>
+              </div>
+              <button type="button" onclick="addReferral()" class="px-2.5 py-1.5 rounded-xl bg-[#FDF7F5] border border-[#E5CCD5] text-xs font-bold text-[#4A152C] hover:bg-[#FCEBF1]">
+                +1 Refer
+              </button>
+            </div>
+            <div class="pt-2 border-t border-[#F5E8ED]">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-[#7D5C69] block mb-1">Client Skin / Shade / Wax Notes</label>
+              <input type="text" value="${cl.note || ''}" oninput="updateClientNote(this.value)" placeholder="Add skin type, foundation shade, allergies..." class="w-full px-3 py-1.5 text-xs rounded-xl border border-[#E5CCD5] bg-[#FDF7F5] focus:outline-none focus:border-[#C86D85]" />
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderRewardsScreen() {
+      const cl = getActiveClient();
+      return `
+        <section class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Signature Lookbook</h3>
+              <span class="text-[10px] font-semibold text-[#C86D85]">Tap to Book Look</span>
+            </div>
+            <div class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+              ${state.lookbook.map(lk => `
+                <div class="w-56 shrink-0 rounded-2xl bg-gradient-to-br ${lk.gradient} text-white p-3.5 shadow-md flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">${lk.tag}</span>
+                      <span class="text-xl">${lk.emoji}</span>
+                    </div>
+                    <h4 class="text-sm font-bold mt-2">${lk.title}</h4>
+                    <p class="text-[11px] text-white/85 mt-0.5 leading-snug">${lk.desc}</p>
+                  </div>
+                  <button type="button" onclick="bookLook('${lk.serviceId}')" class="w-full py-1.5 rounded-xl bg-white text-[#2A121C] text-[11px] font-bold hover:bg-[#FFF2F6] transition">
+                    Book This Look →
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Loyalty Rewards</h3>
+              <span class="text-xs font-bold text-[#C86D85]">${cl.stamps} Stamps Available</span>
+            </div>
+            ${state.rewards.map(r => {
+              const canClaim = cl.stamps >= r.cost;
+              return `
+                <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] flex items-center justify-between gap-3 shadow-sm">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-[#FDF7F5] flex items-center justify-center text-2xl shrink-0">${r.emoji}</div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-[#2A121C]">${r.title}</h4>
+                      <p class="text-[11px] text-[#7D5C69]">${r.desc}</p>
+                      <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCEBF1] text-[#8E3255]">Needs ${r.cost} Stamps</span>
+                    </div>
+                  </div>
+                  <button type="button" onclick="claimReward('${r.id}')" ${canClaim ? '' : 'disabled'} class="shrink-0 px-3 py-2 rounded-xl text-xs font-bold transition ${canClaim ? 'bg-[#C86D85] text-white hover:bg-[#9E4260] shadow' : 'bg-[#F2E6EA] text-[#A98E98] cursor-not-allowed'}">
+                    ${canClaim ? 'Claim' : `Need ${r.cost - cl.stamps}`}
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Claimed Vouchers</h3>
+            ${state.vouchers.map(v => `
+              <div class="bg-white rounded-2xl p-3 border border-dashed border-[#C86D85] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-[#2A121C]">${v.rewardTitle}</div>
+                  <div class="text-[11px] text-[#7D5C69]">${v.clientName}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-mono font-bold text-[#C86D85]">${v.code}</div>
+                  <div class="text-[10px] text-[#2E7D32] font-semibold">${v.status}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderWinbackScreen() {
+      const dormant = state.clients.filter(c => c.lastVisitDaysAgo >= 25);
+      const offers = [
+        '15% Off on Monthly Facial / Touch-up',
+        'Free Eyebrow & Upper Lip with Hair Spa',
+        'Festive & Wedding Glow Package at ₹999'
+      ];
+
+      return `
+        <section class="space-y-4">
+          <div class="bg-gradient-to-r from-[#4A152C] to-[#6B2342] rounded-2xl p-4 text-white shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] uppercase tracking-wider bg-pink-500/80 px-2 py-0.5 rounded-full font-bold">Touch-up &amp; Festive Alerts</span>
+                <h2 class="text-base font-bold mt-1.5">Bring Back Parlour Clients</h2>
+                <p class="text-[11px] text-[#F2D5DF]">${dormant.length} clients haven't visited in 25+ days.</p>
+              </div>
+              <div class="text-2xl">💬</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] space-y-2 shadow-sm">
+            <label class="text-xs font-bold text-[#2A121C] block">Select Win-Back / Festive Offer</label>
+            <select onchange="setWinbackOffer(this.value)" class="w-full px-3 py-2 rounded-xl border border-[#E5CCD5] text-xs bg-[#FDF7F5] text-[#2A121C] focus:outline-none">
+              ${offers.map(o => `<option value="${o}" ${state.winbackOffer === o ? 'selected' : ''}>${o}</option>`).join('')}
+            </select>
+            <button type="button" onclick="sendBulkWinback()" class="w-full py-2 rounded-xl bg-[#2E7D32] hover:bg-[#256628] text-white text-xs font-bold transition">
+              Send Auto Reminder to All (${dormant.filter(d => !d.pingedToday).length} Pending)
+            </button>
+          </div>
+
+          <div class="space-y-2.5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Clients Due for Touch-up (25+ Days)</h3>
+            ${dormant.map(c => {
+              const msg = encodeURIComponent(`Hi ${c.name}! It's time for your monthly glow at ${state.studioName}. Show this message for ${state.winbackOffer}! ✨`);
+              return `
+                <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] flex items-center justify-between gap-2 shadow-sm">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <h4 class="text-sm font-bold text-[#2A121C] truncate">${c.name}</h4>
+                      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600 shrink-0">${c.lastVisitDaysAgo}d ago</span>
+                    </div>
+                    <p class="text-[11px] text-[#7D5C69] mt-0.5 truncate">${c.note || 'Regular client'}</p>
+                  </div>
+                  ${c.pingedToday ? `
+                    <span class="px-3 py-1.5 rounded-xl bg-green-50 text-[#2E7D32] text-xs font-bold shrink-0">Sent ✓</span>
+                  ` : `
+                    <a href="https://wa.me/91${c.phone}?text=${msg}" target="_blank" rel="noopener" onclick="markPinged('${c.id}')" class="px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shrink-0 transition">
+                      WhatsApp
+                    </a>
+                  `}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderOwnerScreen() {
+      const totalClients = state.clients.length;
+      const totalBilled = state.bookings.reduce((acc, b) => acc + b.total, 0);
+      const totalAdvance = state.bookings.reduce((acc, b) => acc + b.advance, 0);
+      const totalPending = Math.max(0, totalBilled - totalAdvance);
+      const googleCount = state.clients.filter(c => c.social && c.social.googleReview).length;
+
+      return `
+        <section class="space-y-4">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] shadow-sm">
+              <div class="text-[11px] text-[#7D5C69]">Total Billed</div>
+              <div class="text-xl font-extrabold text-[#2A121C] mt-0.5">₹${totalBilled}</div>
+              <div class="text-[10px] text-[#2E7D32] font-semibold mt-0.5">Advance Recd: ₹${totalAdvance}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] shadow-sm">
+              <div class="text-[11px] text-[#7D5C69]">Balance Pending</div>
+              <div class="text-xl font-extrabold text-[#C86D85] mt-0.5">₹${totalPending}</div>
+              <div class="text-[10px] text-[#7D5C69] mt-0.5">${state.bookings.length} Active Bookings</div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] shadow-sm">
+              <div class="text-[11px] text-[#7D5C69]">Total Clients</div>
+              <div class="text-xl font-extrabold text-[#2A121C] mt-0.5">${totalClients}</div>
+              <div class="text-[10px] text-[#7D5C69] mt-0.5">Studio &amp; Bridal</div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#F0DFE5] shadow-sm">
+              <div class="text-[11px] text-[#7D5C69]">Google Reviews</div>
+              <div class="text-xl font-extrabold text-[#1A73E8] mt-0.5">${googleCount}/${totalClients}</div>
+              <div class="text-[10px] text-[#7D5C69] mt-0.5">1st-Visit Triggered</div>
+            </div>
+          </div>
+
+          <!-- Wedding & Outdoor Makeup Packages (Shadi & Outdoor Orders) -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Shadi &amp; Outdoor MUA Packages</h3>
+                <p class="text-[10px] text-[#7D5C69]">Bridal, Haldi, Sangeet &amp; venue makeup orders</p>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCEBF1] text-[#8E3255]">${(state.bridalPackages || []).length} Packages</span>
+            </div>
+            <div class="space-y-2">
+              ${(state.bridalPackages || []).map(bp => `
+                <div class="p-2.5 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] space-y-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-[#2A121C]">${bp.emoji} ${bp.name}</span>
+                    <button type="button" onclick="deleteBridalPkg('${bp.id}')" class="text-[10px] font-bold text-red-600 px-1.5 py-0.5">Remove</button>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 text-[11px] text-[#7D5C69]">
+                    <span>${bp.type} • ${bp.desc}</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 pt-1">
+                    <input type="number" value="${bp.price}" oninput="editBridalPrice('${bp.id}', this.value)" class="w-24 px-2 py-1 text-xs font-bold rounded-lg border border-[#E5CCD5] bg-white text-[#C86D85]" />
+                    <button type="button" onclick="quickBookBridal('${bp.id}')" class="px-3 py-1 rounded-lg bg-[#4A152C] text-white text-[10px] font-bold hover:bg-[#521A33]">+ Book Order</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="pt-2 border-t border-[#F5E8ED] space-y-2">
+              <p class="text-[11px] font-bold text-[#2A121C]">Add New Shadi / Outdoor Package</p>
+              <div class="grid grid-cols-3 gap-2">
+                <input id="new-bp-name" type="text" placeholder="Package Name" class="col-span-2 px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" />
+                <input id="new-bp-price" type="number" placeholder="₹ Price" class="px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" />
+              </div>
+              <div class="flex gap-2">
+                <select id="new-bp-type" class="flex-1 px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] bg-[#FDF7F5]">
+                  <option value="Wedding Package">Wedding Package</option>
+                  <option value="Outdoor Order">Outdoor Order</option>
+                </select>
+                <button type="button" onclick="addBridalPkg()" class="px-3 py-1.5 rounded-xl bg-[#C86D85] text-white text-xs font-bold">+ Add Package</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wedding / Outdoor & Salon Bookings + Balance Tracker -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Wedding, Outdoor &amp; Salon Orders</h3>
+            <div class="p-2.5 rounded-xl bg-[#FFF2F6] border border-[#F3CFD9] space-y-2">
+              <div class="text-[11px] font-bold text-[#8E3255]">+ Log New Outdoor / Bridal Order</div>
+              <div class="grid grid-cols-2 gap-2">
+                <input id="ob-client" type="text" placeholder="Bride / Client Name" class="px-2.5 py-1.5 text-xs rounded-lg border border-[#E5CCD5] bg-white" />
+                <input id="ob-venue" type="text" placeholder="Venue / Outdoor City" class="px-2.5 py-1.5 text-xs rounded-lg border border-[#E5CCD5] bg-white" />
+                <input id="ob-date" type="text" placeholder="Event Date &amp; Time" class="px-2.5 py-1.5 text-xs rounded-lg border border-[#E5CCD5] bg-white" />
+                <input id="ob-adv" type="number" placeholder="Advance ₹" class="px-2.5 py-1.5 text-xs rounded-lg border border-[#E5CCD5] bg-white" />
+              </div>
+              <div class="flex gap-2">
+                <select id="ob-pkg" class="flex-1 px-2 py-1.5 text-xs rounded-lg border border-[#E5CCD5] bg-white">
+                  ${(state.bridalPackages || []).map(bp => `<option value="${bp.id}">${bp.name} (₹${bp.price})</option>`).join('')}
+                </select>
+                <button type="button" onclick="addOutdoorOrder()" class="px-3 py-1.5 rounded-lg bg-[#4A152C] text-white text-xs font-bold">Save Order</button>
+              </div>
+            </div>
+            ${state.bookings.map(b => {
+              const due = Math.max(0, b.total - b.advance);
+              return `
+                <div class="p-2.5 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-bold text-[#2A121C] truncate">${b.clientName} • ${b.slot}</span>
+                      ${b.isOutdoor ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 shrink-0">OUTDOOR</span>' : ''}
+                    </div>
+                    <div class="text-[11px] text-[#7D5C69] truncate">${b.itemsText}${b.venue ? ` • 📍 ${b.venue}` : ''}</div>
+                    <div class="text-[11px] font-bold mt-0.5 ${due > 0 ? 'text-red-600' : 'text-[#2E7D32]'}">
+                      Total ₹${b.total} • ${due > 0 ? `Due: ₹${due}` : 'Fully Paid ✓'}
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-1 shrink-0">
+                    <button type="button" onclick="toggleBookingStatus('${b.id}')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${b.status === 'Completed' ? 'bg-green-100 text-[#2E7D32]' : 'bg-amber-100 text-amber-800'}">${b.status}</button>
+                    ${due > 0 ? `<button type="button" onclick="markBalancePaid('${b.id}')" class="px-2 py-0.5 rounded-lg bg-[#4A152C] text-white text-[10px] font-bold">Mark Paid</button>` : ''}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Client Follow & Review Tracker -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Client Follow &amp; Review Tracker</h3>
+              <span class="text-[10px] font-semibold text-[#7D5C69]">Tap to toggle</span>
+            </div>
+            <div class="space-y-2">
+              ${state.clients.map(c => {
+                const sc = c.social || {};
+                const badges = [
+                  { key: 'googleReview', label: 'Google ⭐' },
+                  { key: 'instagram', label: 'IG' },
+                  { key: 'facebook', label: 'FB' },
+                  { key: 'youtube', label: 'YT' },
+                  { key: 'whatsapp', label: 'WA' }
+                ];
+                return `
+                  <div class="p-2.5 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] space-y-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-[#2A121C]">${c.name}</span>
+                      <span class="text-[10px] text-[#7D5C69]">${c.totalVisits} Visits</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                      ${badges.map(b => `
+                        <button type="button" onclick="toggleClientSocial('${c.id}', '${b.key}')" class="px-2 py-0.5 rounded-full text-[10px] font-bold border transition ${sc[b.key] ? 'bg-green-100 border-green-300 text-[#2E7D32]' : 'bg-white border-[#E5CCD5] text-[#9E808B]'}">
+                          ${b.label} ${sc[b.key] ? '✓' : '✕'}
+                        </button>
+                      `).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Google & Social Handles Manager -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Google Profile &amp; Social Handles</h3>
+            <div class="space-y-2">
+              <input type="url" value="${state.googleReviewUrl}" oninput="updateSocialLink('google', this.value)" placeholder="Google Business Review URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="url" value="${state.socialLinks.instagram}" oninput="updateSocialLink('instagram', this.value)" placeholder="Instagram URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+                <input type="url" value="${state.socialLinks.facebook}" oninput="updateSocialLink('facebook', this.value)" placeholder="Facebook URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+                <input type="url" value="${state.socialLinks.youtube}" oninput="updateSocialLink('youtube', this.value)" placeholder="YouTube URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+                <input type="url" value="${state.socialLinks.whatsapp}" oninput="updateSocialLink('whatsapp', this.value)" placeholder="WhatsApp Channel" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Service & Package Manager -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Service &amp; Package Manager</h3>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCEBF1] text-[#8E3255]">${state.services.length} Services</span>
+            </div>
+            <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+              ${state.services.map(sv => `
+                <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] text-xs">
+                  <span class="font-semibold text-[#2A121C] truncate">${sv.emoji} ${sv.name} <span class="text-[#C86D85]">(₹${sv.price})</span></span>
+                  <button type="button" onclick="deleteService('${sv.id}')" class="text-[11px] font-bold text-red-600 px-2 py-0.5 rounded-lg hover:bg-red-50 shrink-0">Remove</button>
+                </div>
+              `).join('')}
+            </div>
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-[#F5E8ED]">
+              <input id="new-svc-name" type="text" placeholder="Service / Package" class="col-span-2 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none" />
+              <input id="new-svc-price" type="number" placeholder="₹ Price" class="px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none" />
+            </div>
+            <div class="flex gap-2">
+              <select id="new-svc-cat" class="flex-1 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5] bg-[#FDF7F5]">
+                <option value="Bridal & MUA">Bridal &amp; MUA</option>
+                <option value="Salon & Skin">Salon &amp; Skin</option>
+                <option value="Hair Care">Hair Care</option>
+              </select>
+              <button type="button" onclick="addServiceItem()" class="px-4 py-2 rounded-xl bg-[#4A152C] text-white text-xs font-bold hover:bg-[#521A33] transition">+ Add</button>
+            </div>
+          </div>
+
+          <!-- 30-Day Pilot & Studio Name -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#2A121C]">Studio Name &amp; 30-Day Pilot Lock</h3>
+            <input type="text" value="${state.studioName}" oninput="updateStudioName(this.value)" placeholder="Studio / Parlour Name" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-[#7D5C69] mb-1">
+                <span>1-Month Pilot Days Remaining</span>
+                <span class="text-[#2A121C]">${state.trialDaysLeft} Days</span>
+              </div>
+              <input type="range" min="0" max="30" value="${state.trialDaysLeft}" oninput="updateTrialDays(this.value)" class="w-full accent-[#C86D85]" />
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-[#2A121C]">Simulate Trial Expired Lock</span>
+              <button type="button" onclick="toggleTrialLock()" class="px-3 py-1.5 rounded-xl text-xs font-bold ${state.trialLocked ? 'bg-red-600 text-white' : 'bg-[#FDF7F5] border border-[#E5CCD5] text-[#2A121C]'}">
+                ${state.trialLocked ? 'Locked (Tap to Unlock)' : 'Unlocked (Active)'}
+              </button>
+            </div>
+            <button type="button" onclick="resetDemo()" class="w-full py-2 rounded-xl border border-[#E5CCD5] text-xs font-semibold text-[#7D5C69] hover:bg-[#FDF7F5] transition">Reset Demo Data</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderProfileScreen() {
+      const initials = getInitials(state.studioName);
+      const certs = state.certificates || [];
+
+      if (state.profileEditMode) {
+        return `
+          <section class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-extrabold text-[#2A121C]">Edit Artist Profile &amp; Catalogue</h2>
+              <button type="button" onclick="toggleProfileEdit()" class="px-3 py-1.5 rounded-xl bg-[#4A152C] text-white text-xs font-bold">Done ✓</button>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-3 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Basic Info</h3>
+              <div>
+                <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Studio / Makeup Artist Name</label>
+                <input type="text" value="${state.studioName}" oninput="updateProfileField('studioName', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Bio / Specialization</label>
+                <input type="text" value="${state.artistTagline}" oninput="updateProfileField('artistTagline', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Mobile / WhatsApp</label>
+                  <input type="tel" value="${state.artistPhone}" oninput="updateProfileField('artistPhone', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+                </div>
+                <div>
+                  <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Instagram ID</label>
+                  <input type="text" value="${state.instagramHandle}" oninput="updateProfileField('instagramHandle', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+                </div>
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Studio Location / Address</label>
+                <input type="text" value="${state.artistLocation}" oninput="updateProfileField('artistLocation', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-[#7D5C69] block mb-0.5">Working Hours</label>
+                <input type="text" value="${state.artistHours}" oninput="updateProfileField('artistHours', this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none focus:border-[#C86D85]" />
+              </div>
+            </div>
+
+            <!-- Certificates Editor -->
+            <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Certificates &amp; Credentials</h3>
+              <div class="flex flex-wrap gap-1.5">
+                ${certs.map((cert, idx) => `
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FCEBF1] text-[#8E3255] text-[11px] font-semibold">
+                    🏅 ${cert}
+                    <button type="button" onclick="removeCertificate(${idx})" class="ml-1 text-red-600 font-bold">×</button>
+                  </span>
+                `).join('')}
+              </div>
+              <div class="flex gap-2">
+                <input id="new-cert-input" type="text" placeholder="Add certificate (e.g. MAC Pro Certified)" class="flex-1 px-3 py-2 text-xs rounded-xl border border-[#E5CCD5] focus:outline-none" />
+                <button type="button" onclick="addCertificate()" class="px-3 py-2 rounded-xl bg-[#4A152C] text-white text-xs font-bold">+ Add</button>
+              </div>
+            </div>
+
+            <!-- Service Catalogue Editor -->
+            <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Edit Service Catalogue</h3>
+              <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                ${state.services.map(sv => `
+                  <div class="p-2.5 rounded-xl bg-[#FDF7F5] border border-[#F0DFE5] space-y-1.5">
+                    <div class="flex items-center justify-between gap-2">
+                      <input type="text" value="${sv.name}" oninput="editServiceField('${sv.id}', 'name', this.value)" class="flex-1 px-2 py-1 text-xs font-bold rounded-lg border border-[#E5CCD5] bg-white" />
+                      <button type="button" onclick="deleteService('${sv.id}')" class="text-[11px] font-bold text-red-600 px-2 py-1">Remove</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                      <input type="number" value="${sv.price}" oninput="editServiceField('${sv.id}', 'price', this.value)" class="px-2 py-1 text-xs rounded-lg border border-[#E5CCD5] bg-white" placeholder="₹ Price" />
+                      <input type="text" value="${sv.duration}" oninput="editServiceField('${sv.id}', 'duration', this.value)" class="px-2 py-1 text-xs rounded-lg border border-[#E5CCD5] bg-white" placeholder="Duration" />
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="pt-2 border-t border-[#F5E8ED] space-y-2">
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="prof-svc-name" type="text" placeholder="New Service Name" class="col-span-2 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5]" />
+                  <input id="prof-svc-price" type="number" placeholder="₹ Price" class="px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5]" />
+                </div>
+                <div class="flex gap-2">
+                  <select id="prof-svc-cat" class="flex-1 px-2.5 py-2 text-xs rounded-xl border border-[#E5CCD5] bg-[#FDF7F5]">
+                    <option value="Bridal & MUA">Bridal &amp; MUA</option>
+                    <option value="Salon & Skin">Salon &amp; Skin</option>
+                    <option value="Hair Care">Hair Care</option>
+                  </select>
+                  <button type="button" onclick="addServiceFromProfile()" class="px-4 py-2 rounded-xl bg-[#C86D85] text-white text-xs font-bold">+ Add Service</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social & Google Links Editor -->
+            <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Google &amp; Social Links</h3>
+              <input type="url" value="${state.googleReviewUrl}" oninput="updateSocialLink('google', this.value)" placeholder="Google Business Profile URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="url" value="${state.socialLinks.instagram}" oninput="updateSocialLink('instagram', this.value)" placeholder="Instagram URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" />
+                <input type="url" value="${state.socialLinks.facebook}" oninput="updateSocialLink('facebook', this.value)" placeholder="Facebook URL" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-[#E5CCD5]" />
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      return `
+        <section class="space-y-4">
+          <!-- Social-Media Style Profile Header Card -->
+          <div class="bg-white rounded-2xl p-5 border border-[#F0DFE5] shadow-sm space-y-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3.5 min-w-0">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4A152C] to-[#C86D85] text-white font-black text-xl flex items-center justify-center border-4 border-[#FCEBF1] shadow shrink-0">
+                  ${initials}
+                </div>
+                <div class="min-w-0">
+                  <h2 class="text-base font-extrabold text-[#2A121C] truncate">${state.studioName}</h2>
+                  <p class="text-xs text-[#7D5C69] leading-snug mt-0.5">${state.artistTagline}</p>
+                  <div class="flex items-center gap-2 mt-1.5">
+                    <a href="${state.socialLinks.instagram}" target="_blank" rel="noopener" class="text-[11px] font-bold text-[#C86D85] hover:underline">${state.instagramHandle}</a>
+                    <span class="text-[#DFC8D1]">•</span>
+                    <span class="text-[11px] font-semibold text-[#2E7D32]">Verified Studio</span>
+                  </div>
+                </div>
+              </div>
+              <button type="button" onclick="toggleProfileEdit()" class="shrink-0 px-3 py-1.5 rounded-xl bg-[#FFF2F6] border border-[#F3CFD9] text-[#C86D85] text-xs font-bold hover:bg-[#FCE3EC] transition">
+                ✏️ Edit Profile
+              </button>
+            </div>
+
+            <!-- Contact, Location & Hours -->
+            <div class="grid grid-cols-1 gap-2 pt-3 border-t border-[#F5E8ED] text-xs">
+              <div class="flex items-center gap-2 text-[#2A121C]">
+                <span>📍</span><span class="font-medium">${state.artistLocation}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-[#2A121C]">
+                  <span>📞</span><span class="font-semibold">+91 ${state.artistPhone}</span>
+                </div>
+                <a href="https://wa.me/91${state.artistPhone}" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-lg bg-[#25D366] text-white text-[11px] font-bold">Chat on WhatsApp</a>
+              </div>
+              <div class="flex items-center gap-2 text-[#7D5C69]">
+                <span>🕒</span><span>${state.artistHours}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certificates & Makeup Expertise -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Certificates &amp; Expertise</h3>
+            <div class="flex flex-wrap gap-1.5">
+              ${certs.map(cert => `
+                <span class="px-3 py-1 rounded-full bg-[#FCEBF1] text-[#8E3255] text-xs font-semibold border border-[#F3CFD9]">🏅 ${cert}</span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Full Service Catalogue Preview -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F0DFE5] space-y-2.5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#7D5C69]">Service Catalogue</h3>
+              <button type="button" onclick="toggleProfileEdit()" class="text-[11px] font-bold text-[#C86D85]">Edit Services</button>
+            </div>
+            <div class="divide-y divide-[#F5E8ED]">
+              ${state.services.map(sv => `
+                <div class="py-2 flex items-center justify-between gap-2">
+                  <div>
+                    <div class="text-xs font-bold text-[#2A121C]">${sv.emoji} ${sv.name}</div>
+                    <div class="text-[10px] text-[#7D5C69]">${sv.category} • ${sv.duration}</div>
+                  </div>
+                  <div class="text-xs font-extrabold text-[#C86D85]">₹${sv.price}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function render() {
+      const main = document.getElementById('main-content');
+      if (state.activeTab === 'book') main.innerHTML = renderBookScreen();
+      else if (state.activeTab === 'stamps') main.innerHTML = renderStampsScreen();
+      else if (state.activeTab === 'rewards') main.innerHTML = renderRewardsScreen();
+      else if (state.activeTab === 'winback') main.innerHTML = renderWinbackScreen();
+      else if (state.activeTab === 'owner') main.innerHTML = renderOwnerScreen();
+      else if (state.activeTab === 'profile') main.innerHTML = renderProfileScreen();
+
+      updateHeaderAndChrome();
+      saveState();
+    }
+
+    window.switchTab = function(tab) {
+      state.activeTab = tab;
+      render();
+    };
+
+    window.selectCategory = function(cat) {
+      state.selectedCategory = cat;
+      render();
+    };
+
+    window.selectDate = function(d) {
+      state.selectedDate = d;
+      render();
+    };
+
+    window.selectSlot = function(sl) {
+      state.selectedSlot = sl;
+      render();
+    };
+
+    window.setAdvanceInput = function(val) {
+      state.advancePaidInput = Math.max(0, Number(val) || 0);
+      saveState();
+    };
+
+    window.updateCart = function(itemId, delta) {
+      const next = (state.cart[itemId] || 0) + delta;
+      if (next <= 0) delete state.cart[itemId];
+      else state.cart[itemId] = next;
+      render();
+    };
+
+    window.bookLook = function(serviceId) {
+      state.cart[serviceId] = (state.cart[serviceId] || 0) + 1;
+      state.activeTab = 'book';
+      showToast('Look selected! Pick your date & time slot.');
+      render();
+    };
+
+    window.openFirstVisitPopup = function(isFirstVisit) {
+      document.getElementById('modal-trigger-badge').textContent = isFirstVisit ? '1st Visit Milestone! ✨' : 'Rate & Follow Us ✨';
+      document.getElementById('modal-subtitle').textContent = isFirstVisit
+        ? 'Thank you for your 1st visit! Rate us on Google & follow on Instagram to unlock VIP perks.'
+        : 'Support our studio with a quick Google review & Instagram follow!';
+      document.getElementById('modal-google-review-link').href = state.googleReviewUrl;
+      renderModalStars();
+      renderModalSocialButtons();
+      document.getElementById('review-social-modal').classList.remove('hidden');
+    };
+
+    function renderModalStars() {
+      document.querySelectorAll('#star-rating-row .star-btn').forEach((btn, i) => {
+        const active = i < state.selectedStars;
+        btn.classList.toggle('text-amber-400', active);
+        btn.classList.toggle('text-[#DFC8D1]', !active);
+      });
+    }
+
+    function renderModalSocialButtons() {
+      const cl = getActiveClient();
+      const sc = cl.social || {};
+      const items = [
+        { key: 'instagram', label: '📸 Instagram', url: state.socialLinks.instagram },
+        { key: 'facebook', label: '📘 Facebook', url: state.socialLinks.facebook },
+        { key: 'youtube', label: '▶️ YouTube', url: state.socialLinks.youtube },
+        { key: 'whatsapp', label: '💬 WhatsApp', url: state.socialLinks.whatsapp }
+      ];
+      document.getElementById('modal-social-buttons').innerHTML = items.map(it => `
+        <a href="${it.url}" target="_blank" rel="noopener" onclick="markSocialConnect('${it.key}')" class="p-2.5 rounded-xl border text-xs font-bold flex items-center justify-between transition ${sc[it.key] ? 'bg-green-50 border-green-300 text-[#2E7D32]' : 'bg-[#FDF7F5] border-[#F0DFE5] text-[#2A121C]'}">
+          <span>${it.label}</span>
+          <span>${sc[it.key] ? 'Followed ✓' : 'Follow →'}</span>
+        </a>
+      `).join('');
+    }
+
+    window.selectStar = function(stars) {
+      state.selectedStars = stars;
+      renderModalStars();
+      saveState();
+    };
+
+    window.markSocialConnect = function(platformKey) {
+      const cl = getActiveClient();
+      if (!cl.social) cl.social = {};
+      cl.social[platformKey] = true;
+      renderModalSocialButtons();
+      showToast('Thanks for connecting!');
+      render();
+    };
+
+    window.logStaffVisit = function() {
+      const cl = getActiveClient();
+      const wasZero = cl.totalVisits === 0;
+      cl.stamps += 1;
+      cl.totalVisits += 1;
+      cl.lastVisitDaysAgo = 0;
+      showToast(`+1 Stamp logged for ${cl.name}!`);
+      render();
+      if (wasZero) {
+        openFirstVisitPopup(true);
+      }
+    };
+
+    window.addReferral = function() {
+      const cl = getActiveClient();
+      cl.referrals += 1;
+      showToast(`Referral added for ${cl.name}!`);
+      render();
+    };
+
+    window.updateClientNote = function(val) {
+      const cl = getActiveClient();
+      cl.note = val;
+      saveState();
+    };
+
+    window.claimReward = function(rewardId) {
+      const cl = getActiveClient();
+      const rw = state.rewards.find(r => r.id === rewardId);
+      if (!rw || cl.stamps < rw.cost) return;
+      cl.stamps -= rw.cost;
+      const code = 'GLOW-' + Math.floor(1000 + Math.random() * 9000);
+      state.vouchers.unshift({
+        code,
+        rewardTitle: rw.title,
+        clientName: cl.name,
+        status: 'Active'
+      });
+      showToast(`Reward claimed! Voucher: ${code}`);
+      render();
+    };
+
+    window.setWinbackOffer = function(val) {
+      state.winbackOffer = val;
+      saveState();
+    };
+
+    window.markPinged = function(id) {
+      const c = state.clients.find(x => x.id === id);
+      if (c) {
+        c.pingedToday = true;
+        showToast(`WhatsApp offer opened for ${c.name}`);
+        render();
+      }
+    };
+
+    window.sendBulkWinback = function() {
+      let count = 0;
+      state.clients.forEach(c => {
+        if (c.lastVisitDaysAgo >= 25 && !c.pingedToday) {
+          c.pingedToday = true;
+          count++;
+        }
+      });
+      showToast(count > 0 ? `Sent touch-up offer to ${count} clients!` : 'All dormant clients already messaged.');
+      render();
+    };
+
+    window.toggleBookingStatus = function(id) {
+      const b = state.bookings.find(x => x.id === id);
+      if (b) {
+        b.status = b.status === 'Confirmed' ? 'Completed' : 'Confirmed';
+        render();
+      }
+    };
+
+    window.markBalancePaid = function(id) {
+      const b = state.bookings.find(x => x.id === id);
+      if (b) {
+        b.advance = b.total;
+        showToast(`Full payment marked for ${b.clientName}`);
+        render();
+      }
+    };
+
+    window.toggleClientSocial = function(cid, key) {
+      const c = state.clients.find(x => x.id === cid);
+      if (!c) return;
+      if (!c.social) c.social = {};
+      c.social[key] = !c.social[key];
+      render();
+    };
+
+    window.updateSocialLink = function(key, val) {
+      const clean = val.trim();
+      if (key === 'google') state.googleReviewUrl = clean || DEFAULT_STATE.googleReviewUrl;
+      else state.socialLinks[key] = clean || DEFAULT_STATE.socialLinks[key];
+      saveState();
+    };
+
+    window.addServiceItem = function() {
+      const name = document.getElementById('new-svc-name').value.trim();
+      const price = Number(document.getElementById('new-svc-price').value);
+      const category = document.getElementById('new-svc-cat').value;
+      if (!name || price <= 0) {
+        showToast('Enter valid service name and price.');
+        return;
+      }
+      const emojis = { 'Bridal & MUA': '💄', 'Salon & Skin': '🌸', 'Hair Care': '💇‍♀️' };
+      state.services.push({
+        id: 's_' + Date.now(),
+        name,
+        category,
+        price,
+        duration: '60 min',
+        emoji: emojis[category] || '✨',
+        popular: false
+      });
+      showToast(`${name} added!`);
+      render();
+    };
+
+    window.deleteService = function(id) {
+      state.services = state.services.filter(s => s.id !== id);
+      delete state.cart[id];
+      showToast('Service removed.');
+      render();
+    };
+
+    window.updateStudioName = function(val) {
+      state.studioName = val.trim() || 'Glow & Grace Studio';
+      updateHeaderAndChrome();
+      saveState();
+    };
+
+    window.updateTrialDays = function(val) {
+      state.trialDaysLeft = Number(val);
+      if (state.trialDaysLeft > 0) state.trialLocked = false;
+      render();
+    };
+
+    window.toggleTrialLock = function() {
+      state.trialLocked = !state.trialLocked;
+      if (!state.trialLocked && state.trialDaysLeft === 0) state.trialDaysLeft = 30;
+      render();
+    };
+
+    window.toggleProfileEdit = function() {
+      state.profileEditMode = !state.profileEditMode;
+      render();
+    };
+
+    window.updateProfileField = function(field, val) {
+      state[field] = val;
+      if (field === 'studioName') {
+        document.getElementById('header-studio-name').textContent = val.trim() || 'Glow & Grace Studio';
+        document.getElementById('header-profile-initials').textContent = getInitials(val.trim() || 'GG');
+      }
+      saveState();
+    };
+
+    window.addCertificate = function() {
+      const inp = document.getElementById('new-cert-input');
+      const val = inp ? inp.value.trim() : '';
+      if (!val) return;
+      if (!state.certificates) state.certificates = [];
+      state.certificates.push(val);
+      showToast('Certificate added!');
+      render();
+    };
+
+    window.removeCertificate = function(idx) {
+      state.certificates.splice(idx, 1);
+      render();
+    };
+
+    window.editServiceField = function(id, field, val) {
+      const sv = state.services.find(x => x.id === id);
+      if (!sv) return;
+      sv[field] = field === 'price' ? Math.max(0, Number(val) || 0) : val;
+      saveState();
+    };
+
+    window.addServiceFromProfile = function() {
+      const name = document.getElementById('prof-svc-name').value.trim();
+      const price = Number(document.getElementById('prof-svc-price').value);
+      const category = document.getElementById('prof-svc-cat').value;
+      if (!name || price <= 0) {
+        showToast('Enter valid service name and price.');
+        return;
+      }
+      const emojis = { 'Bridal & MUA': '💄', 'Salon & Skin': '🌸', 'Hair Care': '💇‍♀️' };
+      state.services.push({
+        id: 's_' + Date.now(),
+        name,
+        category,
+        price,
+        duration: '60 min',
+        emoji: emojis[category] || '✨',
+        popular: false
+      });
+      showToast(`${name} added to catalogue!`);
+      render();
+    };
+
+    window.toggleServicesEdit = function() {
+      state.servicesEditMode = !state.servicesEditMode;
+      render();
+    };
+
+    window.addServiceFromTab = function() {
+      const name = document.getElementById('svc-tab-name').value.trim();
+      const price = Number(document.getElementById('svc-tab-price').value);
+      const category = document.getElementById('svc-tab-cat').value;
+      const duration = document.getElementById('svc-tab-dur').value.trim() || '45 min';
+      if (!name || price <= 0) {
+        showToast('Enter valid service name and price.');
+        return;
+      }
+      const emojis = { 'Facial & Skin': '💆‍♀️', 'Threading & Wax': '🌸', 'Hair Care': '💇‍♀️', 'Mani-Pedi': '💅' };
+      state.services.push({
+        id: 's_' + Date.now(),
+        name,
+        category,
+        price,
+        duration,
+        emoji: emojis[category] || '✨',
+        popular: false
+      });
+      showToast(`${name} added to Services!`);
+      render();
+    };
+
+    window.editBridalPrice = function(id, val) {
+      const bp = (state.bridalPackages || []).find(x => x.id === id);
+      if (bp) {
+        bp.price = Math.max(0, Number(val) || 0);
+        saveState();
+      }
+    };
+
+    window.deleteBridalPkg = function(id) {
+      state.bridalPackages = (state.bridalPackages || []).filter(x => x.id !== id);
+      showToast('Package removed.');
+      render();
+    };
+
+    window.addBridalPkg = function() {
+      const name = document.getElementById('new-bp-name').value.trim();
+      const price = Number(document.getElementById('new-bp-price').value);
+      const type = document.getElementById('new-bp-type').value;
+      if (!name || price <= 0) {
+        showToast('Enter package name and price.');
+        return;
+      }
+      if (!state.bridalPackages) state.bridalPackages = [];
+      state.bridalPackages.push({
+        id: 'bp_' + Date.now(),
+        name,
+        type,
+        price,
+        emoji: type === 'Outdoor Order' ? '🚗' : '👰',
+        desc: type === 'Outdoor Order' ? 'Custom outdoor venue order' : 'Custom wedding makeup package'
+      });
+      showToast(`${name} added!`);
+      render();
+    };
+
+    window.quickBookBridal = function(id) {
+      const bp = (state.bridalPackages || []).find(x => x.id === id);
+      if (!bp) return;
+      const cl = getActiveClient();
+      state.bookings.unshift({
+        id: 'BK-' + Math.floor(205 + Math.random() * 790),
+        clientName: cl.name,
+        venue: bp.type === 'Outdoor Order' ? 'Outdoor Venue' : 'Studio / Venue',
+        slot: 'Upcoming Date',
+        itemsText: bp.name,
+        total: bp.price,
+        advance: Math.round(bp.price * 0.3),
+        status: 'Confirmed',
+        isOutdoor: true
+      });
+      showToast(`${bp.name} booked for ${cl.name}!`);
+      render();
+    };
+
+    window.addOutdoorOrder = function() {
+      const clientName = document.getElementById('ob-client').value.trim();
+      const venue = document.getElementById('ob-venue').value.trim() || 'Outdoor Venue';
+      const slot = document.getElementById('ob-date').value.trim() || 'Upcoming Date';
+      const advance = Math.max(0, Number(document.getElementById('ob-adv').value) || 0);
+      const pkgId = document.getElementById('ob-pkg').value;
+      const bp = (state.bridalPackages || []).find(x => x.id === pkgId);
+      if (!clientName || !bp) {
+        showToast('Enter bride/client name.');
+        return;
+      }
+      state.bookings.unshift({
+        id: 'BK-' + Math.floor(205 + Math.random() * 790),
+        clientName,
+        venue,
+        slot,
+        itemsText: bp.name,
+        total: bp.price,
+        advance: Math.min(bp.price, advance),
+        status: 'Confirmed',
+        isOutdoor: true
+      });
+      showToast(`Outdoor/Bridal order saved for ${clientName}!`);
+      render();
+    };
+
+    window.resetDemo = function() {
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      state.activeTab = 'owner';
+      showToast('Demo reset!');
+      render();
+    };
+
+    function openClientModal() {
+      const list = document.getElementById('modal-client-list');
+      list.innerHTML = state.clients.map(c => `
+        <button type="button" onclick="selectClient('${c.id}')" class="w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition ${c.id === state.activeClientId ? 'bg-[#FFF2F6] border-[#C86D85]' : 'bg-[#FDF7F5] border-[#F0DFE5]'}">
+          <div>
+            <div class="text-xs font-bold text-[#2A121C]">${c.name}</div>
+            <div class="text-[11px] text-[#7D5C69]">+91 ${c.phone} • ${c.totalVisits} Visits</div>
+          </div>
+          <span class="text-xs font-bold text-[#C86D85]">${c.stamps} 💄</span>
+        </button>
+      `).join('');
+      document.getElementById('client-modal').classList.remove('hidden');
+    }
+
+    window.selectClient = function(id) {
+      state.activeClientId = id;
+      document.getElementById('client-modal').classList.add('hidden');
+      render();
+    };
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    document.getElementById('trial-badge-btn').addEventListener('click', () => switchTab('owner'));
+    document.getElementById('header-profile-btn').addEventListener('click', () => {
+      state.profileEditMode = false;
+      switchTab('profile');
+    });
+    document.getElementById('unlock-demo-btn').addEventListener('click', () => switchTab('owner'));
+    document.getElementById('switch-client-btn').addEventListener('click', openClientModal);
+    document.getElementById('close-client-modal').addEventListener('click', () => {
+      document.getElementById('client-modal').classList.add('hidden');
+    });
+    document.getElementById('close-review-modal').addEventListener('click', () => {
+      document.getElementById('review-social-modal').classList.add('hidden');
+    });
+
+    document.getElementById('add-client-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('new-client-name').value.trim();
+      const phone = document.getElementById('new-client-phone').value.trim();
+      const note = document.getElementById('new-client-note').value.trim();
+      if (!name || !phone) return;
+      const newCl = {
+        id: 'cl_' + Date.now(),
+        name,
+        phone,
+        stamps: 0,
+        totalVisits: 0,
+        referrals: 0,
+        lastVisitDaysAgo: 0,
+        note: note || 'New studio client',
+        pingedToday: false,
+        social: { googleReview: false, instagram: false, facebook: false, youtube: false, whatsapp: false }
+      };
+      state.clients.unshift(newCl);
+      state.activeClientId = newCl.id;
+      document.getElementById('new-client-name').value = '';
+      document.getElementById('new-client-phone').value = '';
+      document.getElementById('new-client-note').value = '';
+      document.getElementById('client-modal').classList.add('hidden');
+      showToast(`Added ${name}! 1st visit popup ready.`);
+      render();
+    });
+
+    document.getElementById('confirm-booking-btn').addEventListener('click', () => {
+      const entries = Object.entries(state.cart).filter(([, qty]) => qty > 0);
+      if (entries.length === 0) return;
+      let total = 0;
+      const parts = [];
+      entries.forEach(([id, qty]) => {
+        const item = state.services.find(s => s.id === id);
+        if (item) {
+          total += item.price * qty;
+          parts.push(`${qty}x ${item.name}`);
+        }
+      });
+      const cl = getActiveClient();
+      const wasFirstVisit = cl.totalVisits === 0;
+      const adv = Math.min(total, state.advancePaidInput || 0);
+      state.bookings.unshift({
+        id: 'BK-' + Math.floor(205 + Math.random() * 790),
+        clientName: cl.name,
+        slot: `${state.selectedDate}, ${state.selectedSlot}`,
+        itemsText: parts.join(', '),
+        total,
+        advance: adv,
+        status: 'Confirmed'
+      });
+      cl.stamps += 1;
+      cl.totalVisits += 1;
+      cl.lastVisitDaysAgo = 0;
+      state.cart = {};
+      state.advancePaidInput = 0;
+      showToast(`Booking confirmed! +1 Stamp added for ${cl.name}.`);
+      render();
+      if (wasFirstVisit) {
+        openFirstVisitPopup(true);
+      }
+    });
+
+    function showWelcomePopup() {
+      if (state.trialLocked || state.trialDaysLeft <= 0) return;
+      document.getElementById('welcome-studio-title').textContent = state.studioName;
+      document.getElementById('welcome-studio-tagline').textContent = state.artistTagline || 'Makeup Artist & Beauty Studio';
+      document.getElementById('welcome-studio-location').textContent = '📍 ' + (state.artistLocation || 'Studio');
+      document.getElementById('welcome-popup-modal').classList.remove('hidden');
+    }
+
+    document.getElementById('welcome-start-btn').addEventListener('click', () => {
+      document.getElementById('welcome-popup-modal').classList.add('hidden');
+      switchTab('book');
+    });
+
+    document.getElementById('welcome-profile-btn').addEventListener('click', () => {
+      document.getElementById('welcome-popup-modal').classList.add('hidden');
+      state.profileEditMode = false;
+      switchTab('profile');
+    });
+
+    render();
+    showWelcomePopup();
+  </script>
+</body>
+</html>
